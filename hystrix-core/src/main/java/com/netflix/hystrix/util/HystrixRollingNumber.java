@@ -15,10 +15,7 @@
  */
 package com.netflix.hystrix.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.locks.ReentrantLock;
@@ -626,7 +623,27 @@ public class HystrixRollingNumber {
          * Returns an iterator on a copy of the internal array so that the iterator won't fail by buckets being added/removed concurrently.
          */
         public Iterator<Bucket> iterator() {
-            return Collections.unmodifiableList(Arrays.asList(getArray())).iterator();
+            final Bucket[] buckets = getArray();
+            return new Iterator<Bucket>() {
+                private int pos = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return pos < buckets.length;
+                }
+
+                @Override
+                public Bucket next() {
+                    try {
+                        final Bucket bucket = buckets[pos];
+                        pos++;
+                        return bucket;
+                    }
+                    catch (ArrayIndexOutOfBoundsException e) {
+                        throw new NoSuchElementException("Attempted to iterate beyond the end of the bucket array");
+                    }
+                }
+            };
         }
 
         public void addLast(Bucket o) {
