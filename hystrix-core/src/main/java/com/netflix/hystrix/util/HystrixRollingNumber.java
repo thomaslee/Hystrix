@@ -547,11 +547,11 @@ public class HystrixRollingNumber {
                  * but since we never clear the data directly, only increment/decrement head/tail we would never get a NULL
                  * just potentially return stale data which we are okay with doing
                  */
-                ArrayList<Bucket> array = new ArrayList<Bucket>();
+                final Bucket[] array = new Bucket[size];
                 for (int i = 0; i < size; i++) {
-                    array.add(data.get(convert(i)));
+                    array[i] = data.get(convert(i));
                 }
-                return array.toArray(new Bucket[array.size()]);
+                return array;
             }
 
             private ListState incrementTail() {
