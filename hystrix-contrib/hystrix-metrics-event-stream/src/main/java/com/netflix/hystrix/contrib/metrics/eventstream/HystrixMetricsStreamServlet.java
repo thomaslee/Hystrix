@@ -180,7 +180,7 @@ public class HystrixMetricsStreamServlet extends HttpServlet {
         }
     }
 
-    private void writeDataTo(Writer writer) throws IOException {
+    private static void writeDataTo(Writer writer) throws IOException {
         boolean output = false;
         for (HystrixCommandMetrics commandMetrics : HystrixCommandMetrics.getInstances()) {
             output = true;
@@ -212,7 +212,7 @@ public class HystrixMetricsStreamServlet extends HttpServlet {
         }
     }
 
-    private void writeCommandData(HystrixCommandMetrics commandMetrics, Writer writer) throws IOException {
+    private static void writeCommandData(HystrixCommandMetrics commandMetrics, Writer writer) throws IOException {
         HystrixCommandKey key = commandMetrics.getCommandKey();
         HystrixCircuitBreaker circuitBreaker = HystrixCircuitBreaker.Factory.getInstance(key);
 
@@ -322,11 +322,11 @@ public class HystrixMetricsStreamServlet extends HttpServlet {
         json.close();
     }
 
-    private boolean hasExecutedCommandsOnThread(HystrixThreadPoolMetrics threadPoolMetrics) {
+    private static boolean hasExecutedCommandsOnThread(HystrixThreadPoolMetrics threadPoolMetrics) {
         return threadPoolMetrics.getCurrentCompletedTaskCount().intValue() > 0;
     }
 
-    private void writeThreadPoolData(HystrixThreadPoolMetrics threadPoolMetrics, Writer writer) throws IOException {
+    private static void writeThreadPoolData(HystrixThreadPoolMetrics threadPoolMetrics, Writer writer) throws IOException {
         HystrixThreadPoolKey key = threadPoolMetrics.getThreadPoolKey();
         JsonGenerator json = jsonFactory.createGenerator(writer);
         json.writeStartObject();
@@ -356,7 +356,7 @@ public class HystrixMetricsStreamServlet extends HttpServlet {
         json.close();
     }
 
-    private void writerCollapserData(HystrixCollapserMetrics collapserMetrics, Writer writer) throws IOException {
+    private static void writerCollapserData(HystrixCollapserMetrics collapserMetrics, Writer writer) throws IOException {
         HystrixCollapserKey key = collapserMetrics.getCollapserKey();
         JsonGenerator json = jsonFactory.createGenerator(writer);
         json.writeStartObject();
